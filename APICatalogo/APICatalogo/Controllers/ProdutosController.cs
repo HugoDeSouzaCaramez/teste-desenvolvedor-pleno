@@ -34,7 +34,7 @@ namespace APICatalogo.Controllers
         [HttpGet("{id:int}", Name="ObterProduto")]
         public ActionResult<Produto> Get(int id)
         {
-            var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+            var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id && !p.Deletado);
             if (produto == null)
             {
                 return NotFound("Produto não encontrado...");
@@ -73,11 +73,11 @@ namespace APICatalogo.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+            var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id && !p.Deletado);
 
             if (produto is null)
             {
-                return NotFound("Produto não localizado...");
+                return NotFound("Produto não localizado ou já excluído...");
             }
 
             produto.Deletado = true;
