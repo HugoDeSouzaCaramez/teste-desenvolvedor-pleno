@@ -32,5 +32,11 @@ public class Produto
 
     [JsonIgnore]
     public Categoria? Categoria { get; set; }
+
+    public int? FornecedorId { get; set; }
+
+    [JsonIgnore]
+    public Fornecedor? Fornecedor { get; set; }
+
     public bool Deletado { get; set; } = false;
 }

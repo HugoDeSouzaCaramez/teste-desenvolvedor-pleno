@@ -5,24 +5,30 @@ using System.Text.Json.Serialization;
 
 namespace APICatalogo.Models;
 
-[Table("Categorias")]
-public class Categoria
+[Table("Fornecedores")]
+public class Fornecedor
 {
-    public Categoria()
+    public Fornecedor()
     {
         Produtos = new Collection<Produto>();
     }
 
     [Key]
-    public int CategoriaId { get; set; }
+    public int FornecedorId { get; set; }
 
     [Required]
-    [StringLength(80)]
+    [StringLength(100)]
     public string? Nome { get; set; }
 
     [Required]
-    [StringLength(500)]
-    public string? Descricao { get; set; }
+    [StringLength(14)]
+    public string? Cnpj { get; set; }
+
+    [StringLength(15)]
+    public string? Telefone { get; set; }
+
+    [StringLength(300)]
+    public string? Endereco { get; set; }
 
     public bool Deletado { get; set; } = false;
 
