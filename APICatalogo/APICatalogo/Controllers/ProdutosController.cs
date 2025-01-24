@@ -1,10 +1,6 @@
-using APICatalogo.Context;
 using APICatalogo.Models;
+using APICatalogo.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
-using System.Text.Json;
-using System.Text;
 
 namespace APICatalogo.Controllers
 {
@@ -12,71 +8,32 @@ namespace APICatalogo.Controllers
     [ApiController]
     public class ProdutosController : Controller
     {
-        private readonly AppDbContext _context;
-        private readonly IDistributedCache _cache;
+        private readonly IProdutoRepository _produtoRepository;
 
-        public ProdutosController(AppDbContext context, IDistributedCache cache)
+        public ProdutosController(IProdutoRepository produtoRepository)
         {
-            _context = context;
-            _cache = cache;
+            _produtoRepository = produtoRepository;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Produto>>> Get()
         {
-            const string cacheKey = "ProdutosCache";
-            var produtosCache = await _cache.GetStringAsync(cacheKey);
-
-            if (!string.IsNullOrEmpty(produtosCache))
-            {
-                var produtosDoCache = JsonSerializer.Deserialize<IEnumerable<Produto>>(produtosCache);
-                return Ok(produtosDoCache);
-            }
-
-            var produtos = await _context.Produtos
-                .Where(p => !p.Deletado)
-                .ToListAsync();
-
-            if (produtos == null || !produtos.Any())
+            var produtos = await _produtoRepository.GetProdutosAsync();
+            if (!produtos.Any())
             {
                 return NotFound("Produtos não encontrados...");
             }
-
-            var serializedProdutos = JsonSerializer.Serialize(produtos);
-            await _cache.SetStringAsync(cacheKey, serializedProdutos, new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-            });
-
             return Ok(produtos);
         }
 
         [HttpGet("{id:int}", Name = "ObterProduto")]
         public async Task<ActionResult<Produto>> Get(int id)
         {
-            string cacheKey = $"Produto_{id}";
-            var produtoCache = await _cache.GetStringAsync(cacheKey);
-
-            if (!string.IsNullOrEmpty(produtoCache))
-            {
-                var produtoDoCache = JsonSerializer.Deserialize<Produto>(produtoCache);
-                return Ok(produtoDoCache);
-            }
-
-            var produto = await _context.Produtos
-                .FirstOrDefaultAsync(p => p.ProdutoId == id && !p.Deletado);
-
+            var produto = await _produtoRepository.GetProdutoByIdAsync(id);
             if (produto == null)
             {
                 return NotFound("Produto não encontrado...");
             }
-
-            var serializedProduto = JsonSerializer.Serialize(produto);
-            await _cache.SetStringAsync(cacheKey, serializedProduto, new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-            });
-
             return Ok(produto);
         }
 
@@ -84,14 +41,12 @@ namespace APICatalogo.Controllers
         public async Task<ActionResult> Post(Produto produto)
         {
             if (produto == null)
+            {
                 return BadRequest();
+            }
 
-            await _context.Produtos.AddAsync(produto);
-            await _context.SaveChangesAsync();
-            await _cache.RemoveAsync("ProdutosCache");
-
-            return new CreatedAtRouteResult("ObterProduto",
-            new { id = produto.ProdutoId }, produto);
+            var novoProduto = await _produtoRepository.AddProdutoAsync(produto);
+            return new CreatedAtRouteResult("ObterProduto", new { id = novoProduto.ProdutoId }, novoProduto);
         }
 
         [HttpPut("{id:int}")]
@@ -102,16 +57,11 @@ namespace APICatalogo.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(produto).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            await _cache.RemoveAsync("ProdutosCache");
-
-            var cacheKey = $"Produto_{id}";
-            var serializedProduto = JsonSerializer.Serialize(produto);
-            await _cache.SetStringAsync(cacheKey, serializedProduto, new DistributedCacheEntryOptions
+            var updated = await _produtoRepository.UpdateProdutoAsync(produto);
+            if (!updated)
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-            });
+                return NotFound("Produto não encontrado...");
+            }
 
             return Ok(produto);
         }
@@ -119,23 +69,13 @@ namespace APICatalogo.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var produto = await _context.Produtos
-                .FirstOrDefaultAsync(p => p.ProdutoId == id && !p.Deletado);
-
-            if (produto == null)
+            var deleted = await _produtoRepository.DeleteProdutoAsync(id);
+            if (!deleted)
             {
                 return NotFound("Produto não localizado ou já excluído...");
             }
 
-            produto.Deletado = true;
-            _context.Entry(produto).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            await _cache.RemoveAsync("ProdutosCache");
-
-            var cacheKey = $"Produto_{id}";
-            await _cache.RemoveAsync(cacheKey);
-
-            return Ok(produto);
+            return Ok($"Produto com ID {id} excluído com sucesso.");
         }
     }
 }
