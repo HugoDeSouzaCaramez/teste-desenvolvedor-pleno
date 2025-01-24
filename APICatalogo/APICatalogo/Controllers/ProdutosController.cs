@@ -1,6 +1,8 @@
 using APICatalogo.Models;
 using APICatalogo.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using APICatalogo.DTOs;
+using AutoMapper;
 
 namespace APICatalogo.Controllers
 {
@@ -9,62 +11,87 @@ namespace APICatalogo.Controllers
     public class ProdutosController : Controller
     {
         private readonly IProdutoRepository _produtoRepository;
+        private readonly IMapper _mapper;
 
-        public ProdutosController(IProdutoRepository produtoRepository)
+        public ProdutosController(IProdutoRepository produtoRepository, IMapper mapper)
         {
             _produtoRepository = produtoRepository;
+            _mapper = mapper;
         }
 
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Produto>>> Get()
+        public async Task<ActionResult<IEnumerable<ProdutoDTO>>> Get()
         {
             var produtos = await _produtoRepository.GetProdutosAsync();
             if (!produtos.Any())
             {
                 return NotFound("Produtos não encontrados...");
             }
-            return Ok(produtos);
+
+            var produtosDto = _mapper.Map<IEnumerable<ProdutoDTO>>(produtos);
+
+            return Ok(produtosDto);
         }
 
+
         [HttpGet("{id:int}", Name = "ObterProduto")]
-        public async Task<ActionResult<Produto>> Get(int id)
+        public async Task<ActionResult<ProdutoDTO>> Get(int id)
         {
             var produto = await _produtoRepository.GetProdutoByIdAsync(id);
             if (produto == null)
             {
-                return NotFound("Produto não encontrado...");
+                return NotFound("Produto não encontrado ou excluído...");
             }
-            return Ok(produto);
+
+            var produtoDto = _mapper.Map<ProdutoDTO>(produto);
+
+            return Ok(produtoDto);
         }
+
 
         [HttpPost]
-        public async Task<ActionResult> Post(Produto produto)
+        public async Task<ActionResult<ProdutoDTO>> Post(ProdutoDTO produtoDto)
         {
-            if (produto == null)
+            if (produtoDto == null)
             {
                 return BadRequest();
             }
+
+            var produto = _mapper.Map<Produto>(produtoDto);
 
             var novoProduto = await _produtoRepository.AddProdutoAsync(produto);
-            return new CreatedAtRouteResult("ObterProduto", new { id = novoProduto.ProdutoId }, novoProduto);
+
+            var novoProdutoDto = _mapper.Map<ProdutoDTO>(novoProduto);
+
+            return new CreatedAtRouteResult("ObterProduto", new { id = novoProdutoDto.ProdutoId }, novoProdutoDto);
         }
+
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(int id, Produto produto)
+        public async Task<ActionResult<ProdutoDTO>> Put(int id, ProdutoDTO produtoDto)
         {
-            if (id != produto.ProdutoId)
+            if (id != produtoDto.ProdutoId)
             {
-                return BadRequest();
+                return BadRequest("IDs não correspondem.");
             }
 
-            var updated = await _produtoRepository.UpdateProdutoAsync(produto);
-            if (!updated)
-            {
-                return NotFound("Produto não encontrado...");
-            }
+            var produto = _mapper.Map<Produto>(produtoDto);
 
-            return Ok(produto);
+            try
+            {
+                var produtoAtualizado = await _produtoRepository.UpdateProdutoAsync(produto);
+                var produtoAtualizadoDto = _mapper.Map<ProdutoDTO>(produtoAtualizado);
+
+                return Ok(produtoAtualizadoDto);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
+
+
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)

@@ -80,10 +80,21 @@ namespace APICatalogo.Repositories
             return produto;
         }
 
-        public async Task<bool> UpdateProdutoAsync(Produto produto)
+        public async Task<Produto> UpdateProdutoAsync(Produto produto)
         {
+            var produtoExistente = await _context.Produtos
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.ProdutoId == produto.ProdutoId && !p.Deletado);
+
+            if (produtoExistente == null)
+            {
+                throw new KeyNotFoundException($"Produto com ID {produto.ProdutoId} não encontrado ou excluído...");
+            }
+
             _context.Entry(produto).State = EntityState.Modified;
+
             var updated = await _context.SaveChangesAsync() > 0;
+
             if (updated)
             {
                 await _cache.RemoveAsync("ProdutosCache");
@@ -94,8 +105,10 @@ namespace APICatalogo.Repositories
                     AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
                 });
             }
-            return updated;
+
+            return produto;
         }
+
 
         public async Task<bool> DeleteProdutoAsync(int id)
         {

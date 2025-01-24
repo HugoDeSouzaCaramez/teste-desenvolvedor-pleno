@@ -9,7 +9,7 @@ namespace APICatalogo.Repositories
         Task<IEnumerable<Produto>> GetProdutosAsync();
         Task<Produto?> GetProdutoByIdAsync(int id);
         Task<Produto> AddProdutoAsync(Produto produto);
-        Task<bool> UpdateProdutoAsync(Produto produto);
+        Task<Produto> UpdateProdutoAsync(Produto produto);
         Task<bool> DeleteProdutoAsync(int id);
     }
 }
