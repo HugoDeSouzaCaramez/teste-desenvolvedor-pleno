@@ -7,6 +7,7 @@ namespace APICatalogo.Repositories
     public interface IProdutoRepository
     {
         Task<IEnumerable<Produto>> GetProdutosAsync();
+        Task<(IEnumerable<Produto>, int)> GetProdutosPaginadosAsync(int pageNumber, int pageSize);
         Task<Produto?> GetProdutoByIdAsync(int id);
         Task<Produto> AddProdutoAsync(Produto produto);
         Task<Produto> UpdateProdutoAsync(Produto produto);

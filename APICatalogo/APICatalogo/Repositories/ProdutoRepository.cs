@@ -46,6 +46,41 @@ namespace APICatalogo.Repositories
             return produtos;
         }
 
+
+        public async Task<(IEnumerable<Produto>, int)> GetProdutosPaginadosAsync(int pageNumber, int pageSize)
+        {
+            string cacheKey = $"ProdutosCache_Page{pageNumber}_Size{pageSize}";
+            var produtosCache = await _cache.GetStringAsync(cacheKey);
+
+            if (!string.IsNullOrEmpty(produtosCache))
+            {
+                var produtosPaginados = JsonSerializer.Deserialize<IEnumerable<Produto>>(produtosCache);
+                var totalProdutos = await _context.Produtos.CountAsync(p => !p.Deletado);
+                return (produtosPaginados ?? new List<Produto>(), totalProdutos);
+            }
+
+            var produtos = await _context.Produtos
+                .Where(p => !p.Deletado)
+                .OrderBy(p => p.ProdutoId)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            if (produtos.Any())
+            {
+                var serializedProdutos = JsonSerializer.Serialize(produtos);
+                await _cache.SetStringAsync(cacheKey, serializedProdutos, new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+                });
+            }
+
+            var totalCount = await _context.Produtos.CountAsync(p => !p.Deletado);
+
+            return (produtos, totalCount);
+        }
+
+
         public async Task<Produto?> GetProdutoByIdAsync(int id)
         {
             var cacheKey = $"Produto_{id}";

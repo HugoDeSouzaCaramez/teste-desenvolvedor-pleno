@@ -20,7 +20,7 @@ namespace APICatalogo.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("todos")] 
         public async Task<ActionResult<IEnumerable<ProdutoDTO>>> Get()
         {
             var produtos = await _produtoRepository.GetProdutosAsync();
@@ -32,6 +32,36 @@ namespace APICatalogo.Controllers
             var produtosDto = _mapper.Map<IEnumerable<ProdutoDTO>>(produtos);
 
             return Ok(produtosDto);
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProdutoDTO>>> Get([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            if (pageNumber < 1 || pageSize < 1)
+            {
+                return BadRequest("Os parâmetros pageNumber e pageSize devem ser maiores que 0.");
+            }
+
+            var (produtos, totalCount) = await _produtoRepository.GetProdutosPaginadosAsync(pageNumber, pageSize);
+
+            if (!produtos.Any())
+            {
+                return NotFound("Nenhum produto encontrado para os parâmetros especificados.");
+            }
+
+            var produtosDto = _mapper.Map<IEnumerable<ProdutoDTO>>(produtos);
+
+            var response = new
+            {
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+                Data = produtosDto
+            };
+
+            return Ok(response);
         }
 
 
@@ -90,7 +120,6 @@ namespace APICatalogo.Controllers
                 return NotFound(ex.Message);
             }
         }
-
 
 
         [HttpDelete("{id:int}")]
