@@ -17,13 +17,13 @@ namespace APICatalogo.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Produto>> Get()
+        public async Task<ActionResult<IEnumerable<Produto>>> Get()
         {
-            var produtos = _context.Produtos
+            var produtos = await _context.Produtos
                 .Where(p => !p.Deletado)
-                .ToList();
+                .ToListAsync();
 
-            if (produtos is null)
+            if (produtos == null || !produtos.Any())
             {
                 return NotFound("Produtos não encontrados...");
             }
@@ -32,9 +32,11 @@ namespace APICatalogo.Controllers
         }
 
         [HttpGet("{id:int}", Name="ObterProduto")]
-        public ActionResult<Produto> Get(int id)
+        public async Task<ActionResult<Produto>> Get(int id)
         {
-            var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id && !p.Deletado);
+            var produto = await _context.Produtos
+                .FirstOrDefaultAsync(p => p.ProdutoId == id && !p.Deletado);
+
             if (produto == null)
             {
                 return NotFound("Produto não encontrado...");
@@ -44,20 +46,20 @@ namespace APICatalogo.Controllers
         }
 
         [HttpPost]
-        public ActionResult Post(Produto produto)
+        public async Task<ActionResult> Post(Produto produto)
         {
             if (produto == null)
                 return BadRequest();
 
-            _context.Produtos.Add(produto);
-            _context.SaveChanges();
+            await _context.Produtos.AddAsync(produto);
+            await _context.SaveChangesAsync();
 
             return new CreatedAtRouteResult("ObterProduto",
             new { id = produto.ProdutoId }, produto);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, Produto produto)
+        public async Task<ActionResult> Put(int id, Produto produto)
         {
             if (id != produto.ProdutoId)
             {
@@ -65,24 +67,25 @@ namespace APICatalogo.Controllers
             }
 
             _context.Entry(produto).State = EntityState.Modified;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Ok(produto);
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id && !p.Deletado);
+            var produto = await _context.Produtos
+                .FirstOrDefaultAsync(p => p.ProdutoId == id && !p.Deletado);
 
-            if (produto is null)
+            if (produto == null)
             {
                 return NotFound("Produto não localizado ou já excluído...");
             }
 
             produto.Deletado = true;
             _context.Entry(produto).State = EntityState.Modified;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Ok(produto);
         }
