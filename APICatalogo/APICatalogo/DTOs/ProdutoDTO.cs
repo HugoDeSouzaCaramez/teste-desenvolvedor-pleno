@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using APICatalogo.Validations;
 
 namespace APICatalogo.DTOs;
 
@@ -7,7 +8,7 @@ public class ProdutoDTO
     public int ProdutoId { get; set; }
 
     [Required(ErrorMessage= "O nome é obrigatório")]
-    [StringLength(20, ErrorMessage = "O nome deve ter entre 3 e 80 caracteres", MinimumLength = 3)]
+    [StringLength(80, ErrorMessage = "O nome deve ter entre 3 e 80 caracteres", MinimumLength = 3)]
     public string? Nome { get; set; }
 
     [Required]
@@ -27,10 +28,12 @@ public class ProdutoDTO
 
     [Required(ErrorMessage = "A categoria é obrigatória")]
     [Range(1, int.MaxValue, ErrorMessage = "A categoria deve ser válida e maior que zero")]
+    [ValidCategoriaId(ErrorMessage = "A categoria informada não é válida.")]
     public int? CategoriaId { get; set; }
 
     [Required(ErrorMessage = "O fornecedor é obrigatório")]
     [Range(1, int.MaxValue, ErrorMessage = "O fornecedor deve ser válido e maior que zero")]
+    [ValidFornecedorId(ErrorMessage = "O fornecedor informado não é válido.")]
     public int? FornecedorId { get; set; }
 
     public bool Deletado { get; set; } = false;
