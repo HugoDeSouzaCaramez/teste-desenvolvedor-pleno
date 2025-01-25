@@ -27,6 +27,10 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Fornecedor>()
             .Property(f => f.Deletado)
             .HasDefaultValue(false);
+        
+        modelBuilder.Entity<Usuario>()
+            .HasIndex(u => u.Nome)
+            .IsUnique();
 
         base.OnModelCreating(modelBuilder);
     }

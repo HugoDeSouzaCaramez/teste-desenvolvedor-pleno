@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using APICatalogo.Validations;
 
 namespace APICatalogo.Models;
 
@@ -11,6 +12,7 @@ public class Usuario
 
     [Required(ErrorMessage= "O nome é obrigatório")]
     [StringLength(80, ErrorMessage = "O nome deve ter entre 3 e 80 caracteres", MinimumLength = 3)]
+    [UniqueName(ErrorMessage = "O nome já está em uso.")]
     public string Nome { get; set; } = string.Empty;
 
     [Required(ErrorMessage= "A senha é obrigatória")]
