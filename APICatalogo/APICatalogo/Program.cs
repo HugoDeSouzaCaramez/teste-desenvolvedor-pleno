@@ -1,5 +1,7 @@
 using APICatalogo.Context;
 using APICatalogo.Repositories;
+using APICatalogo.Services;
+using APICatalogo.Middlewares;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using System.Text.Json.Serialization;
@@ -42,6 +44,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
+builder.Services.AddSingleton<ITokenRevocationService, TokenRevocationService>();
+
 builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
@@ -57,6 +61,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<TokenRevocationMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

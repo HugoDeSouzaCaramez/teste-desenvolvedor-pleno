@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using APICatalogo.Models;
 using APICatalogo.Repositories;
+using APICatalogo.Services;
 
 namespace APICatalogo.Controllers;
 
@@ -14,11 +15,16 @@ public class AutenticacoesController : Controller
 {
     private readonly IConfiguration _configuration;
     private readonly IUsuarioRepository _usuarioRepository;
+    private readonly ITokenRevocationService _tokenRevocationService;
 
-    public AutenticacoesController(IConfiguration configuration, IUsuarioRepository usuarioRepository)
+    public AutenticacoesController(
+    IConfiguration configuration,
+    IUsuarioRepository usuarioRepository,
+    ITokenRevocationService tokenRevocationService)
     {
         _configuration = configuration;
         _usuarioRepository = usuarioRepository;
+        _tokenRevocationService = tokenRevocationService;
     }
 
     [HttpPost("login")]
@@ -28,7 +34,7 @@ public class AutenticacoesController : Controller
             return BadRequest("Dados de login inválidos.");
 
         var usuario = _usuarioRepository.GetUsuarioByNome(login.Nome);
-        
+
         if (usuario == null || usuario.Senha != login.Senha)
         {
             return Unauthorized("Nome ou senha inválidos.");
@@ -56,5 +62,20 @@ public class AutenticacoesController : Controller
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+        if (string.IsNullOrEmpty(token))
+        {
+            return BadRequest(new { message = "Token não fornecido." });
+        }
+
+        _tokenRevocationService.RevokeToken(token);
+        return Ok(new { message = "Logout realizado com sucesso." });
     }
 }
