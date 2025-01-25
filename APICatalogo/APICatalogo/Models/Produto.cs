@@ -11,7 +11,7 @@ public class Produto
     public int ProdutoId { get; set; }
 
     [Required(ErrorMessage= "O nome é obrigatório")]
-    [StringLength(20, ErrorMessage = "O nome deve ter entre 3 e 80 caracteres", MinimumLength = 3)]
+    [StringLength(80, ErrorMessage = "O nome deve ter entre 3 e 80 caracteres", MinimumLength = 3)]
     public string? Nome { get; set; }
 
     [Required]

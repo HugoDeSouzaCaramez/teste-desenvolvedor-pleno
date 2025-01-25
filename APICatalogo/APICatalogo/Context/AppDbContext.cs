@@ -11,6 +11,8 @@ public class AppDbContext : DbContext
     public DbSet<Categoria>? Categorias { get; set; }
     public DbSet<Produto>? Produtos { get; set; }
     public DbSet<Fornecedor>? Fornecedores { get; set; }
+    public DbSet<Usuario>? Usuarios { get; set; }
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
