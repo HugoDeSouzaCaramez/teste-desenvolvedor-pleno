@@ -22,5 +22,17 @@ namespace APICatalogo.Controllers
             var fornecedores = _fornecedorRepository.GetAllFornecedores();
             return Ok(fornecedores);
         }
+
+
+        [HttpGet("{id}")]
+        public IActionResult GetFornecedorById(int id)
+        {
+            var fornecedor = _fornecedorRepository.GetFornecedorById(id);
+            if (fornecedor == null)
+            {
+                return NotFound(new { Message = $"Fornecedor com ID {id} não encontrado..." });
+            }
+            return Ok(fornecedor);
+        }
     }
 }

@@ -22,5 +22,17 @@ namespace APICatalogo.Controllers
             var categorias = _categoriaRepository.GetAllCategorias();
             return Ok(categorias);
         }
+        
+
+        [HttpGet("{id}")]
+        public IActionResult GetCategoriaById(int id)
+        {
+            var categoria = _categoriaRepository.GetCategoriaById(id);
+            if (categoria == null)
+            {
+                return NotFound(new { Message = $"Categoria com ID {id} não encontrada..." });
+            }
+            return Ok(categoria);
+        }
     }
 }
