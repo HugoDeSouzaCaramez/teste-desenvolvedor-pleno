@@ -9,6 +9,7 @@ using APICatalogo.DTOs.Mappings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Cors;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -52,6 +53,15 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+ options.AddPolicy(name: "ReactPolicy",
+ cfg =>
+ {
+     cfg.AllowAnyHeader();
+     cfg.AllowAnyMethod();
+     cfg.WithOrigins(builder.Configuration["AllowedCORS"]);
+ }));
+
 builder.Services.AddAutoMapper(typeof(ProdutoDTOMappingProfile));
 
 var app = builder.Build();
@@ -66,6 +76,7 @@ app.UseMiddleware<TokenRevocationMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors("ReactPolicy");
 app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();

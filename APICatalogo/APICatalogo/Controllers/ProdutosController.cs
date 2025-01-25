@@ -3,11 +3,13 @@ using APICatalogo.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using APICatalogo.DTOs;
 using AutoMapper;
+using Microsoft.AspNetCore.Cors;
 
 namespace APICatalogo.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [EnableCors("ReactPolicy")]
     public class ProdutosController : Controller
     {
         private readonly IProdutoRepository _produtoRepository;
