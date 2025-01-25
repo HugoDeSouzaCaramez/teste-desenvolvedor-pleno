@@ -25,6 +25,7 @@ namespace APICatalogo.Repositories
 
         public void AddUsuario(Usuario usuario)
         {
+            usuario.Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha);
             _context.Usuarios.Add(usuario);
             _context.SaveChanges();
         }
@@ -36,6 +37,11 @@ namespace APICatalogo.Repositories
             if (trackedEntity != null)
             {
                 _context.Entry(trackedEntity).State = EntityState.Detached;
+            }
+
+            if (!string.IsNullOrEmpty(usuario.Senha))
+            {
+                usuario.Senha = BCrypt.Net.BCrypt.HashPassword(usuario.Senha);
             }
 
             _context.Entry(usuario).State = EntityState.Modified;

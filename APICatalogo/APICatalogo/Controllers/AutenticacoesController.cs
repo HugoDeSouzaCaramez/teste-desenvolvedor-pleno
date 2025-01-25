@@ -35,7 +35,7 @@ public class AutenticacoesController : Controller
 
         var usuario = _usuarioRepository.GetUsuarioByNome(login.Nome);
 
-        if (usuario == null || usuario.Senha != login.Senha)
+        if (usuario == null || !BCrypt.Net.BCrypt.Verify(login.Senha, usuario.Senha))
         {
             return Unauthorized("Nome ou senha inválidos.");
         }

@@ -13,7 +13,6 @@ namespace APICatalogo.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-[Authorize]
 public class UsuariosController : Controller
 {
     private readonly IUsuarioRepository _usuarioRepository;
@@ -24,6 +23,7 @@ public class UsuariosController : Controller
     }
 
     [HttpGet]
+    [Authorize]
     public IActionResult GetAllUsuarios()
     {
         var usuarios = _usuarioRepository.GetAllUsuarios();
@@ -31,6 +31,7 @@ public class UsuariosController : Controller
     }
 
     [HttpGet("{id}")]
+    [Authorize]
     public IActionResult GetUsuarioById(int id)
     {
         var usuario = _usuarioRepository.GetUsuarioById(id);
@@ -47,6 +48,7 @@ public class UsuariosController : Controller
     }
 
     [HttpPut("{id}")]
+    [Authorize]
     public IActionResult UpdateUsuario(int id, [FromBody] Usuario usuario)
     {
         if (id != usuario.UsuarioId) return BadRequest("Usuario ID mismatch");
@@ -59,6 +61,7 @@ public class UsuariosController : Controller
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public IActionResult DeleteUsuario(int id)
     {
         var usuario = _usuarioRepository.GetUsuarioById(id);
