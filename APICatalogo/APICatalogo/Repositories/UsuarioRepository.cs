@@ -20,6 +20,9 @@ namespace APICatalogo.Repositories
         public Usuario GetUsuarioById(int id) =>
             _context.Usuarios.FirstOrDefault(u => u.UsuarioId == id);
 
+        public Usuario GetUsuarioByNome(string nome) => _context.Usuarios.FirstOrDefault(u => u.Nome == nome);
+
+
         public void AddUsuario(Usuario usuario)
         {
             _context.Usuarios.Add(usuario);

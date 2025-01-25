@@ -11,7 +11,7 @@ using APICatalogo.Repositories;
 namespace APICatalogo.Controllers;
 
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 [Authorize]
 public class UsuariosController : Controller

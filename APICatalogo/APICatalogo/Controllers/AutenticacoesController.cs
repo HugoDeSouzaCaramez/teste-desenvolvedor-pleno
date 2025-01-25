@@ -1,7 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using APICatalogo.Models;
@@ -9,27 +8,34 @@ using APICatalogo.Repositories;
 
 namespace APICatalogo.Controllers;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class AutenticacoesController : Controller
 {
     private readonly IConfiguration _configuration;
+    private readonly IUsuarioRepository _usuarioRepository;
 
-    public AutenticacoesController(IConfiguration configuration)
+    public AutenticacoesController(IConfiguration configuration, IUsuarioRepository usuarioRepository)
     {
         _configuration = configuration;
+        _usuarioRepository = usuarioRepository;
     }
 
     [HttpPost("login")]
-    public IActionResult Login(Login login)
+    public IActionResult Login([FromBody] Login login)
     {
-        if (login.Nome == "admin" && login.Senha == "password")
+        if (!ModelState.IsValid)
+            return BadRequest("Dados de login inválidos.");
+
+        var usuario = _usuarioRepository.GetUsuarioByNome(login.Nome);
+        
+        if (usuario == null || usuario.Senha != login.Senha)
         {
-            var token = GenerateJwtToken(login.Nome);
-            return Ok(new { token });
+            return Unauthorized("Nome ou senha inválidos.");
         }
 
-        return Unauthorized("Senha ou nome invalidos");
+        var token = GenerateJwtToken(usuario.Nome);
+        return Ok(new { token });
     }
 
     private string GenerateJwtToken(string nome)

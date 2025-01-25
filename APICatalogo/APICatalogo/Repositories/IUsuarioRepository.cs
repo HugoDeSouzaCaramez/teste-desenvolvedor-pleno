@@ -7,6 +7,7 @@ namespace APICatalogo.Repositories
     {
         IEnumerable<Usuario> GetAllUsuarios();
         Usuario GetUsuarioById(int id);
+        Usuario GetUsuarioByNome(string nome);
         void AddUsuario(Usuario usuario);
         void UpdateUsuario(Usuario usuario);
         void DeleteUsuario(Usuario usuario);
