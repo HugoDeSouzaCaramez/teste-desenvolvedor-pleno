@@ -58,16 +58,26 @@ const ProductForm = () => {
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm({
+      ...form,
+      [name]: name === 'preco'
+        ? parseFloat(value)
+        : name === 'estoque'
+          ? parseInt(value, 10)
+          : value,
+    });
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const formToSubmit = id ? form : { ...form, produtoId: 0 };
+
       if (id) {
-        await axios.put(`${API_BASE_URL}/Produtos/${id}`, form);
+        await axios.put(`${API_BASE_URL}/Produtos/${id}`, formToSubmit);
       } else {
-        await axios.post(`${API_BASE_URL}/Produtos`, form);
+        await axios.post(`${API_BASE_URL}/Produtos`, formToSubmit);
       }
       navigate('/');
     } catch (error) {
