@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../components/ui/Button';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Container, Button } from '@mui/material';
 import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:5082';
@@ -32,44 +32,47 @@ const ProductList = () => {
   };
 
   return (
-    <div>
+    <Container>
+      <Typography variant="h4" gutterBottom>
+        Lista de Produtos
+      </Typography>
       <Button onClick={() => navigate('/produto')} className="mb-4">
         Novo Produto
       </Button>
-      <table className="table-auto w-full border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border px-4 py-2">Nome</th>
-            <th className="border px-4 py-2">Descrição</th>
-            <th className="border px-4 py-2">Preço</th>
-            <th className="border px-4 py-2">Categoria</th>
-            <th className="border px-4 py-2">Fornecedor</th>
-            <th className="border px-4 py-2">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product) => (
-            <tr key={product.produtoId}>
-              <td className="border px-4 py-2">{product.nome}</td>
-              <td className="border px-4 py-2">{product.descricao}</td>
-              <td className="border px-4 py-2">{product.preco}</td>
-              <td className="border px-4 py-2">{product.categoria?.nome}</td>
-              <td className="border px-4 py-2">{product.fornecedor?.nome}</td>
-              <td className="border px-4 py-2">
-                <Button onClick={() => navigate(`/produto/${product.produtoId}`)}>Editar</Button>
-                <Button
-                  onClick={() => handleDelete(product.produtoId)}
-                  className="ml-2"
-                  variant="destructive"
-                >
-                  Excluir
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Nome</TableCell>
+              <TableCell>Descrição</TableCell>
+              <TableCell>Preço</TableCell>
+              <TableCell>Categoria</TableCell>
+              <TableCell>Fornecedor</TableCell>
+              <TableCell>Ações</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {products.map((product) => (
+              <TableRow key={product.produtoId}>
+                <TableCell>{product.nome}</TableCell>
+                <TableCell>{product.descricao}</TableCell>
+                <TableCell>{product.preco}</TableCell>
+                <TableCell>{product.categoria?.nome}</TableCell>
+                <TableCell>{product.fornecedor?.nome}</TableCell>
+                <TableCell>
+                  <Button onClick={() => navigate(`/produto/${product.produtoId}`)}>
+                    Editar
+                  </Button>
+                  <Button onClick={() => handleDelete(product.produtoId)} color="secondary">
+                    Excluir
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Container>
   );
 };
 
