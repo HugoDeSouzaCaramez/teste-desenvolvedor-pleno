@@ -1,9 +1,9 @@
-import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ProductList from "./pages/ProductList";
 import ProductForm from "./pages/ProductForm";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import { CssBaseline, ThemeProvider, createTheme, Grid } from "@mui/material";
-
 
 const theme = createTheme({
   palette: {
@@ -33,8 +33,10 @@ const App = () => {
         >
           <h1 style={{ textAlign: "center", marginBottom: "2rem" }}>Gestão de Produtos</h1>
           <Routes>
-            <Route path="/" element={<ProductList />} />
+            <Route path="/" element={<Login />} />
             <Route path="/produto/:id?" element={<ProductForm />} />
+            <Route path="/produtos" element={<ProductList />} />
+            <Route path="/register" element={<Register />} />
           </Routes>
         </Grid>
       </Router>
