@@ -6,7 +6,7 @@ using System.Text.Json;
 using System.Text;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
+using APICatalogo.DTOs;
 namespace APICatalogo.Repositories
 {
     public class ProdutoRepository : IProdutoRepository
@@ -110,7 +110,7 @@ namespace APICatalogo.Repositories
         {
             await _context.Produtos.AddAsync(produto);
             await _context.SaveChangesAsync();
-            await _cache.RemoveAsync("ProdutosCache");
+            await _cache.RemoveAsync("ProdutosComRelacionamentosCache");
 
             return produto;
         }
@@ -132,7 +132,8 @@ namespace APICatalogo.Repositories
 
             if (updated)
             {
-                await _cache.RemoveAsync("ProdutosCache");
+                await _cache.RemoveAsync("ProdutosComRelacionamentosCache");
+                await _cache.RemoveAsync($"Produto_{produto.ProdutoId}");
                 var cacheKey = $"Produto_{produto.ProdutoId}";
                 var serializedProduto = JsonSerializer.Serialize(produto);
                 await _cache.SetStringAsync(cacheKey, serializedProduto, new DistributedCacheEntryOptions
@@ -158,12 +159,65 @@ namespace APICatalogo.Repositories
 
             if (deleted)
             {
-                await _cache.RemoveAsync("ProdutosCache");
+                await _cache.RemoveAsync("ProdutosComRelacionamentosCache");
                 var cacheKey = $"Produto_{id}";
                 await _cache.RemoveAsync(cacheKey);
             }
 
             return deleted;
+        }
+
+
+        public async Task<IEnumerable<ProdutoDTO>> GetProdutosComRelacionamentosAsync()
+        {
+            const string cacheKey = "ProdutosComRelacionamentosCache";
+            var produtosCache = await _cache.GetStringAsync(cacheKey);
+
+            if (!string.IsNullOrEmpty(produtosCache))
+            {
+                return JsonSerializer.Deserialize<IEnumerable<ProdutoDTO>>(produtosCache) ?? new List<ProdutoDTO>();
+            }
+
+            var produtos = await _context.Produtos
+                .Include(p => p.Categoria)
+                .Include(p => p.Fornecedor)
+                .Where(p => !p.Deletado)
+                .ToListAsync();
+
+            var produtosDto = await _context.Produtos
+            .Where(p => !p.Deletado)
+            .Select(p => new ProdutoDTO
+            {
+                ProdutoId = p.ProdutoId,
+                Nome = p.Nome,
+                Descricao = p.Descricao,
+                Preco = p.Preco,
+                ImagemUrl = p.ImagemUrl,
+                Estoque = p.Estoque,
+                CategoriaId = p.CategoriaId,
+                CategoriaNome = _context.Categorias
+                    .Where(c => c.CategoriaId == p.CategoriaId && !c.Deletado)
+                    .Select(c => c.Nome)
+                    .FirstOrDefault(),
+                FornecedorId = p.FornecedorId,
+                FornecedorNome = _context.Fornecedores
+                    .Where(f => f.FornecedorId == p.FornecedorId && !f.Deletado)
+                    .Select(f => f.Nome)
+                    .FirstOrDefault(),
+                Deletado = p.Deletado
+            }).ToListAsync();
+
+            if (produtosDto.Any())
+            {
+                var serializedProdutos = JsonSerializer.Serialize(produtosDto);
+
+                await _cache.SetStringAsync(cacheKey, serializedProdutos, new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+                });
+            }
+
+            return produtosDto;
         }
     }
 }

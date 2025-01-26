@@ -57,13 +57,16 @@ const ProductList = () => {
                 <TableCell>{product.nome}</TableCell>
                 <TableCell>{product.descricao}</TableCell>
                 <TableCell>{product.preco}</TableCell>
-                <TableCell>{product.categoria?.nome}</TableCell>
-                <TableCell>{product.fornecedor?.nome}</TableCell>
+                <TableCell>{product.categoriaNome}</TableCell>
+                <TableCell>{product.fornecedorNome}</TableCell>
                 <TableCell>
                   <Button onClick={() => navigate(`/produto/${product.produtoId}`)}>
                     Editar
                   </Button>
-                  <Button onClick={() => handleDelete(product.produtoId)} color="secondary">
+                  <Button
+                    onClick={() => handleDelete(product.produtoId)}
+                    color="secondary"
+                  >
                     Excluir
                   </Button>
                 </TableCell>

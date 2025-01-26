@@ -23,18 +23,20 @@ public class ProdutoDTO
     [StringLength(300)]
     public string? ImagemUrl { get; set; }
 
-    [Range(0, 99999, ErrorMessage = "O fornecedor deve estar entre {1} e {2}")]
+    [Range(0, 99999, ErrorMessage = "O estoque deve estar entre {1} e {2}")]
     public int Estoque { get; set; }
 
     [Required(ErrorMessage = "A categoria é obrigatória")]
     [Range(1, int.MaxValue, ErrorMessage = "A categoria deve ser válida e maior que zero")]
     [ValidCategoriaId(ErrorMessage = "A categoria informada não é válida.")]
     public int? CategoriaId { get; set; }
+    public string? CategoriaNome { get; set; }
 
     [Required(ErrorMessage = "O fornecedor é obrigatório")]
     [Range(1, int.MaxValue, ErrorMessage = "O fornecedor deve ser válido e maior que zero")]
     [ValidFornecedorId(ErrorMessage = "O fornecedor informado não é válido.")]
     public int? FornecedorId { get; set; }
+    public string? FornecedorNome { get; set; }
 
     public bool Deletado { get; set; } = false;
 }
