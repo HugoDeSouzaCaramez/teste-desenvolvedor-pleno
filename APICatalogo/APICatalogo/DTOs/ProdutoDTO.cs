@@ -30,13 +30,11 @@ public class ProdutoDTO
     [Range(1, int.MaxValue, ErrorMessage = "A categoria deve ser válida e maior que zero")]
     [ValidCategoriaId(ErrorMessage = "A categoria informada não é válida.")]
     public int? CategoriaId { get; set; }
-    public string? CategoriaNome { get; set; }
 
     [Required(ErrorMessage = "O fornecedor é obrigatório")]
     [Range(1, int.MaxValue, ErrorMessage = "O fornecedor deve ser válido e maior que zero")]
     [ValidFornecedorId(ErrorMessage = "O fornecedor informado não é válido.")]
     public int? FornecedorId { get; set; }
-    public string? FornecedorNome { get; set; }
 
     public bool Deletado { get; set; } = false;
 }

@@ -22,15 +22,16 @@ namespace APICatalogo.Controllers
         }
 
 
-        [HttpGet("todos")]
+        [HttpGet("todos")] 
         public async Task<ActionResult<IEnumerable<ProdutoDTO>>> Get()
         {
-            var produtosDto = await _produtoRepository.GetProdutosComRelacionamentosAsync();
-
-            if (!produtosDto.Any())
+            var produtos = await _produtoRepository.GetProdutosAsync();
+            if (!produtos.Any())
             {
                 return NotFound("Produtos não encontrados...");
             }
+
+            var produtosDto = _mapper.Map<IEnumerable<ProdutoDTO>>(produtos);
 
             return Ok(produtosDto);
         }

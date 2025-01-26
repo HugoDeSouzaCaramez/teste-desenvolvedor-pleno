@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Container, Button } from '@mui/material';
 import axios from 'axios';
@@ -57,16 +57,13 @@ const ProductList = () => {
                 <TableCell>{product.nome}</TableCell>
                 <TableCell>{product.descricao}</TableCell>
                 <TableCell>{product.preco}</TableCell>
-                <TableCell>{product.categoriaNome}</TableCell>
-                <TableCell>{product.fornecedorNome}</TableCell>
+                <TableCell>{product.categoria?.nome}</TableCell>
+                <TableCell>{product.fornecedor?.nome}</TableCell>
                 <TableCell>
                   <Button onClick={() => navigate(`/produto/${product.produtoId}`)}>
                     Editar
                   </Button>
-                  <Button
-                    onClick={() => handleDelete(product.produtoId)}
-                    color="secondary"
-                  >
+                  <Button onClick={() => handleDelete(product.produtoId)} color="secondary">
                     Excluir
                   </Button>
                 </TableCell>
