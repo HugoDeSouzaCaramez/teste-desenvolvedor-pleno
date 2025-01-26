@@ -57,7 +57,7 @@ const Register = () => {
               Registrar
             </Button>
             <Button
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/')}
               color="secondary"
               variant="outlined"
               style={{ marginLeft: '1rem' }}

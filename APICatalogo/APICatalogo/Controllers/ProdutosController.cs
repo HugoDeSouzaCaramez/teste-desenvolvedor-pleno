@@ -10,6 +10,7 @@ namespace APICatalogo.Controllers
     [Route("[controller]")]
     [ApiController]
     [EnableCors("ReactPolicy")]
+    [Authorize]
     public class ProdutosController : Controller
     {
         private readonly IProdutoRepository _produtoRepository;

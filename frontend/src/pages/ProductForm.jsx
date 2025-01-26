@@ -79,7 +79,7 @@ const ProductForm = () => {
       } else {
         await axios.post(`${API_BASE_URL}/Produtos`, formToSubmit);
       }
-      navigate('/');
+      navigate('/produtos');
     } catch (error) {
       console.error('Falha ao salvar o produto:', error);
     }
@@ -180,7 +180,7 @@ const ProductForm = () => {
               Salvar
             </Button>
             <Button
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/produtos')}
               color="secondary"
               variant="outlined"
               style={{ marginLeft: '1rem' }}
