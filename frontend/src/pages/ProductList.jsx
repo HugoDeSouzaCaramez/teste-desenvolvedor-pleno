@@ -1,47 +1,32 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-  Container,
-  Button,
-  TableFooter,
-  TablePagination,
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableContainer, 
+  TableHead, 
+  TableRow, 
+  Paper, 
+  Typography, 
+  Container, 
+  Button
 } from '@mui/material';
-import axios from 'axios';
+import api from '../api';
 
-const API_BASE_URL = 'http://localhost:5082';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
-  const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [totalCount, setTotalCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchProducts();
-  }, [pageNumber, pageSize]);
+  }, []);
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/Produtos`, {
-        params: { pageNumber, pageSize },
-      });
-
-      if (response.data && response.data.data) {
-        setProducts(response.data.data);
-        setTotalCount(response.data.totalCount);
-      } else {
-        setProducts([]);
-        setTotalCount(0);
-      }
+      const response = await api.get('/Produtos/todos');
+      setProducts(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Falha ao buscar produtos:', error);
     }
@@ -49,20 +34,11 @@ const ProductList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${API_BASE_URL}/Produtos/${id}`);
+      await api.delete((`/Produtos/${id}`));
       fetchProducts();
     } catch (error) {
       console.error('Falha ao excluir produto:', error);
     }
-  };
-
-  const handlePageChange = (event, newPage) => {
-    setPageNumber(newPage + 1);
-  };
-
-  const handleRowsPerPageChange = (event) => {
-    setPageSize(parseInt(event.target.value, 10));
-    setPageNumber(1);
   };
 
   return (
@@ -104,22 +80,6 @@ const ProductList = () => {
               </TableRow>
             ))}
           </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 20, 40, 60, 100, 200]}
-                count={totalCount}
-                rowsPerPage={pageSize}
-                page={pageNumber - 1}
-                onPageChange={handlePageChange}
-                onRowsPerPageChange={handleRowsPerPageChange}
-                labelRowsPerPage="Itens por página"
-                labelDisplayedRows={({ from, to, count }) =>
-                  `${from}-${to} de ${count !== -1 ? count : `mais de ${to}`}`
-                }
-              />
-            </TableRow>
-          </TableFooter>
         </Table>
       </TableContainer>
     </Container>

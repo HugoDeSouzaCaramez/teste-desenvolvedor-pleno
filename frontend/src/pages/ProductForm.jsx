@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { TextField, Grid, Container, Typography, Button, MenuItem } from '@mui/material';
-import axios from 'axios';
+import api from '../api';
 
-const API_BASE_URL = 'http://localhost:5082';
 
 const ProductForm = () => {
   const [form, setForm] = useState({
@@ -31,7 +30,7 @@ const ProductForm = () => {
 
   const fetchProduct = async (id) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/Produtos/${id}`);
+      const response = await api.get(`/Produtos/${id}`);
       setForm(response.data);
     } catch (error) {
       console.error('Falha ao buscar o produto:', error);
@@ -40,7 +39,7 @@ const ProductForm = () => {
 
   const fetchCategorias = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/Categorias`);
+      const response = await api.get('/Categorias');
       setCategorias(response.data);
     } catch (error) {
       console.error('Falha ao buscar categorias:', error);
@@ -49,7 +48,7 @@ const ProductForm = () => {
 
   const fetchFornecedores = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/Fornecedores`);
+      const response = await api.get('/Fornecedores');
       setFornecedores(response.data);
     } catch (error) {
       console.error('Falha ao buscar fornecedores:', error);
@@ -75,9 +74,9 @@ const ProductForm = () => {
       const formToSubmit = id ? form : { ...form, produtoId: 0 };
 
       if (id) {
-        await axios.put(`${API_BASE_URL}/Produtos/${id}`, formToSubmit);
+        await api.put(`/Produtos/${id}`, formToSubmit);
       } else {
-        await axios.post(`${API_BASE_URL}/Produtos`, formToSubmit);
+        await api.post('/Produtos', formToSubmit);
       }
       navigate('/produtos');
     } catch (error) {

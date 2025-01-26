@@ -76,9 +76,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<TokenRevocationMiddleware>();
 
+app.UseCors("ReactPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("ReactPolicy");
 app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using APICatalogo.DTOs;
 using AutoMapper;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Authorization;
 
 namespace APICatalogo.Controllers
 {

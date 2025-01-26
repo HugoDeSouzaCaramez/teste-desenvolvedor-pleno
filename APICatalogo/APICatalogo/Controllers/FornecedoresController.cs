@@ -2,11 +2,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using APICatalogo.Models;
 using APICatalogo.Repositories;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Authorization;
 
 namespace APICatalogo.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [EnableCors("ReactPolicy")]
+    [Authorize]
     public class FornecedoresController : Controller
     {
         private readonly IFornecedorRepository _fornecedorRepository;
