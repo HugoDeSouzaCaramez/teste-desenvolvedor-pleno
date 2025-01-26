@@ -81,6 +81,32 @@ namespace APICatalogo.Repositories
         }
 
 
+        public async Task<IEnumerable<Produto>> BuscarPorNomeAsync(string nome)
+        {
+            string cacheKey = $"ProdutosPorNome_{nome.ToLower()}";
+            var produtosCache = await _cache.GetStringAsync(cacheKey);
+
+            if (!string.IsNullOrEmpty(produtosCache))
+            {
+                return JsonSerializer.Deserialize<IEnumerable<Produto>>(produtosCache) ?? new List<Produto>();
+            }
+
+            var produtos = await _context.Produtos
+                .Where(p => EF.Functions.Like(p.Nome!, $"%{nome}%") && !p.Deletado)
+                .ToListAsync();
+
+            if (produtos.Any())
+            {
+                var serializedProdutos = JsonSerializer.Serialize(produtos);
+                await _cache.SetStringAsync(cacheKey, serializedProdutos, new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+                });
+            }
+
+            return produtos;
+        }
+
         public async Task<Produto?> GetProdutoByIdAsync(int id)
         {
             var cacheKey = $"Produto_{id}";

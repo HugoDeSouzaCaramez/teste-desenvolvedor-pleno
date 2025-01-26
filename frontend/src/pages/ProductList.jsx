@@ -12,7 +12,9 @@ import {
   Container,
   Button,
   TableFooter,
-  TablePagination
+  TablePagination,
+  TextField,
+  Box
 } from '@mui/material';
 import api from '../api';
 
@@ -20,11 +22,20 @@ const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    if (searchTerm) {
+      const delayDebounceFn = setTimeout(() => {
+        searchProducts(searchTerm);
+      }, 800);
+
+      return () => clearTimeout(delayDebounceFn);
+    } else {
+      fetchProducts();
+    }
+  }, [searchTerm]);
 
   const fetchProducts = async () => {
     try {
@@ -32,6 +43,17 @@ const ProductList = () => {
       setProducts(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Falha ao buscar produtos:', error);
+    }
+  };
+
+  const searchProducts = async (term) => {
+    try {
+      const response = await api.get(`/Produtos/buscar`, {
+        params: { nome: term }
+      });
+      setProducts(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Falha ao buscar produtos por nome:', error);
     }
   };
 
@@ -63,9 +85,18 @@ const ProductList = () => {
       <Typography variant="h4" gutterBottom>
         Lista de Produtos
       </Typography>
-      <Button onClick={() => navigate('/produto')} className="mb-4">
-        Novo Produto
-      </Button>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+        <TextField
+          label="Buscar Produtos"
+          variant="outlined"
+          size="small"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <Button onClick={() => navigate('/produto')} variant="contained" color="primary">
+          Novo Produto
+        </Button>
+      </Box>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -87,12 +118,20 @@ const ProductList = () => {
                 <TableCell>{product.categoriaId}</TableCell>
                 <TableCell>{product.fornecedorId}</TableCell>
                 <TableCell>
-                  <Button onClick={() => navigate(`/produto/${product.produtoId}`)}>
+                  <Button
+                    onClick={() => navigate(`/produto/${product.produtoId}`)}
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                  >
                     Editar
                   </Button>
                   <Button
                     onClick={() => handleDelete(product.produtoId)}
+                    variant="contained"
                     color="secondary"
+                    size="small"
+                    style={{ marginLeft: 8 }}
                   >
                     Excluir
                   </Button>

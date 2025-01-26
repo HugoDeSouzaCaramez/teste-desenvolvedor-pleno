@@ -24,7 +24,7 @@ namespace APICatalogo.Controllers
         }
 
 
-        [HttpGet("todos")] 
+        [HttpGet("todos")]
         public async Task<ActionResult<IEnumerable<ProdutoDTO>>> Get()
         {
             var produtos = await _produtoRepository.GetProdutosAsync();
@@ -82,6 +82,28 @@ namespace APICatalogo.Controllers
 
             return Ok(produtoDto);
         }
+
+
+        [HttpGet("buscar")]
+        public async Task<ActionResult<IEnumerable<ProdutoDTO>>> BuscarPorNome([FromQuery] string nome)
+        {
+            if (string.IsNullOrWhiteSpace(nome))
+            {
+                return BadRequest("O nome do produto deve ser informado.");
+            }
+
+            var produtos = await _produtoRepository.BuscarPorNomeAsync(nome);
+
+            if (!produtos.Any())
+            {
+                return NotFound("Nenhum produto encontrado com o nome especificado.");
+            }
+
+            var produtosDto = _mapper.Map<IEnumerable<ProdutoDTO>>(produtos);
+
+            return Ok(produtosDto);
+        }
+
 
 
         [HttpPost]
