@@ -24,7 +24,7 @@ namespace APICatalogo.Controllers
         }
 
 
-        [HttpGet("todos")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<ProdutoDTO>>> Get()
         {
             var produtos = await _produtoRepository.GetProdutosAsync();
@@ -39,7 +39,7 @@ namespace APICatalogo.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("paginados")]
         public async Task<ActionResult<IEnumerable<ProdutoDTO>>> Get([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             if (pageNumber < 1 || pageSize < 1)

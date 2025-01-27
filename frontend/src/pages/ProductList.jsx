@@ -39,7 +39,7 @@ const ProductList = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await api.get('/Produtos/todos');
+      const response = await api.get('/Produtos');
       setProducts(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Falha ao buscar produtos:', error);
