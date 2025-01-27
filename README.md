@@ -12,6 +12,7 @@ Certifique-se de ter as seguintes versões instaladas em seu ambiente:
 - **.NET SDK**: 8.0.405
 - **Node.js**: v22.5.1
 - **Docker**: 27.4.0
+- **MySQL**: 8.0.36
 
 ### **Configuração do Backend**
 1. Navegue até o diretório do backend:
