@@ -85,19 +85,37 @@ const ProductList = () => {
       <Typography variant="h4" gutterBottom>
         Lista de Produtos
       </Typography>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+        sx={{ flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}
+      >
         <TextField
           label="Buscar Produtos"
           variant="outlined"
           size="small"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{ width: { xs: '100%', sm: 'auto' } }}
         />
-        <Button onClick={() => navigate('/produto')} variant="contained" color="primary">
+        <Button
+          onClick={() => navigate('/produto')}
+          variant="contained"
+          color="primary"
+        >
           Novo Produto
         </Button>
       </Box>
-      <TableContainer component={Paper}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          overflowX: 'auto',
+          maxWidth: '100%',
+          '&::-webkit-scrollbar': { display: 'none' },
+        }}
+      >
         <Table>
           <TableHead>
             <TableRow>
@@ -123,6 +141,7 @@ const ProductList = () => {
                     variant="contained"
                     color="primary"
                     size="small"
+                    sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                   >
                     Editar
                   </Button>
@@ -131,7 +150,11 @@ const ProductList = () => {
                     variant="contained"
                     color="secondary"
                     size="small"
-                    style={{ marginLeft: 8 }}
+                    sx={{
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                      marginLeft: { xs: 0, sm: 1 },
+                      marginTop: { xs: 1, sm: 0 },
+                    }}
                   >
                     Excluir
                   </Button>
@@ -150,7 +173,15 @@ const ProductList = () => {
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 labelRowsPerPage="Itens por página:"
-                labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
+                labelDisplayedRows={({ from, to, count }) =>
+                  `${from}-${to} de ${count}`
+                }
+                sx={{
+                  '.MuiTablePagination-toolbar': {
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    alignItems: { xs: 'start', sm: 'center' },
+                  },
+                }}
               />
             </TableRow>
           </TableFooter>
