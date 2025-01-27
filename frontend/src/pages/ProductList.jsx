@@ -131,8 +131,13 @@ const ProductList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {displayedProducts.map((product) => (
-              <TableRow key={product.produtoId}>
+            {displayedProducts.map((product, index) => (
+              <TableRow 
+                key={product.produtoId}
+                sx={{
+                  backgroundColor: index % 2 === 0 ? 'action.hover' : 'background.paper',
+                }}
+              >
                 <TableCell
                   sx={{
                     whiteSpace: 'normal',
