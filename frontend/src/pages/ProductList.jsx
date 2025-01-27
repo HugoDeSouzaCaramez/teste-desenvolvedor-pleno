@@ -40,9 +40,15 @@ const ProductList = () => {
   const fetchProducts = async () => {
     try {
       const response = await api.get('/Produtos');
-      setProducts(Array.isArray(response.data) ? response.data : []);
+      if (response && response.data) {
+        setProducts(Array.isArray(response.data) ? response.data : []);
+      } else {
+        console.error('Resposta inválida da API ao buscar produtos:', response);
+        setProducts([]);
+      }
     } catch (error) {
       console.error('Falha ao buscar produtos:', error);
+      setProducts([]);
     }
   };
 
@@ -51,23 +57,29 @@ const ProductList = () => {
       const response = await api.get(`/Produtos/buscar`, {
         params: { nome: term }
       });
-      setProducts(Array.isArray(response.data) ? response.data : []);
+      if (response && response.data) {
+        setProducts(Array.isArray(response.data) ? response.data : []);
+      } else {
+        console.error('Resposta inválida da API ao buscar produtos por nome:', response);
+        setProducts([]);
+      }
     } catch (error) {
       console.error('Falha ao buscar produtos por nome:', error);
+      setProducts([]);
     }
   };
 
   const handleDelete = async (id, nome) => {
     const confirmDelete = window.confirm(`Tem certeza de que deseja excluir o produto "${nome}"?`);
     if (!confirmDelete) return;
-  
+
     try {
       await api.delete(`/Produtos/${id}`);
       fetchProducts();
     } catch (error) {
       console.error('Falha ao excluir produto:', error);
     }
-  }; 
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -132,7 +144,7 @@ const ProductList = () => {
           </TableHead>
           <TableBody>
             {displayedProducts.map((product, index) => (
-              <TableRow 
+              <TableRow
                 key={product.produtoId}
                 sx={{
                   backgroundColor: index % 2 === 0 ? 'action.hover' : 'background.paper',
