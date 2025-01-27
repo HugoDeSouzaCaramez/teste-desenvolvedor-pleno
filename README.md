@@ -1,107 +1,140 @@
-# Teste Técnico: Desenvolvedor Full Stack (C# / React)
+# Projeto Full Stack - Catálogo de Produtos
 
-![image](https://github.com/user-attachments/assets/b7fde9b9-5285-48b2-85c7-222db008933c)
-
-Bem-vindo(a) ao teste para a vaga de Desenvolvedor Full Stack Pleno! Aqui você poderá demonstrar suas habilidades técnicas e seu conhecimento no desenvolvimento de aplicações integradas.
-
----
-
-## O Desafio
-
-O objetivo é criar uma aplicação para gestão de produtos. A solução deverá incluir:
-
-1. Uma API RESTful em **C#** para gerenciar o cadastro e operações de produtos.
-2. Uma interface web em **React** que permita interações com a API.
-
-A solução deve refletir boas práticas de desenvolvimento e design.
+## **Descrição do Projeto**
+Este projeto é uma aplicação full stack para gerenciamento de um catálogo de produtos. Ele é composto por um backend em .NET e um frontend em React. O backend implementa um CRUD completo para a entidade Produto, além de endpoints de consulta para Fornecedor e Categoria. O frontend oferece uma interface interativa para interagir com o backend.
 
 ---
 
-## Requisitos Obrigatórios
+## **Configuração e Execução do Projeto**
 
-### Backend
+### **Requisitos Pré-Instalação**
+Certifique-se de ter as seguintes versões instaladas em seu ambiente:
+- **.NET SDK**: 8.0.405
+- **Node.js**: v22.5.1
+- **Docker**: 27.4.0
 
-1. **CRUD de Produtos**:
-   - Implementar as operações de criação (POST), leitura (GET - individual e lista), atualização (PUT) e exclusão (DELETE) para produtos.
-   - O **DELETE** deve ser apenas lógico, ou seja, os produtos excluídos não devem ser removidos do banco de dados, mas sim marcados como inativos (ex.: campo `isDeleted`).
+### **Configuração do Backend**
+1. Navegue até o diretório do backend:
+   ```bash
+   cd diretório_raiz_do_projeto_completo/APICatalogo/APICatalogo
+   ```
 
-2. **Relacionamento entre Tabelas**:
-   - Estruturar as tabelas com os seguintes relacionamentos:
-     - **Categoria do Produto**:
-       - Uma tabela de categorias que contenha campos como `id`, `nome` e `descricao`. Cada produto deve estar associado a uma categoria.
-       - Os dados de categorias devem ser previamente populados na inicialização do banco. Por exemplo: "Eletrônicos", "Móveis", "Alimentos".
-     - **Fornecedor**:
-       - Uma tabela de fornecedores que contenha campos como `id`, `nome`, `cnpj`, `telefone` e `endereco`. Cada produto pode estar associado a um ou mais fornecedores.
-       - Os dados de fornecedores também devem ser previamente populados na inicialização do banco com dados fictícios, mas plausíveis.
+2. Atualize o banco de dados:
+   ```bash
+   dotnet ef database update
+   ```
 
-3. **Autenticação**:
-   - Adicionar um mecanismo de autenticação básico (JWT, por exemplo) para proteger os endpoints da API.
+3. Execute o backend usando Docker Compose:
+   ```bash
+   docker-compose up --build
+   ```
 
-4. **Banco de Dados**:
-   - Utilize um banco relacional (MySQL, SQL Server, Informix).
+4. Para desenvolvimento local, utilize:
+   ```bash
+   dotnet watch
+   ```
 
-### Frontend
+### **Configuração do Frontend**
+1. Navegue até o diretório do frontend:
+   ```bash
+   cd diretório_raiz_do_projeto_completo/frontend
+   ```
 
-1. **Listagem de Produtos**:
-   - Exibir os produtos cadastrados em uma tabela responsiva, incluindo informações de categoria e fornecedores.
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
 
-2. **Cadastro e Edição de Produtos**:
-   - Formulário para criar e editar produtos, com opção de selecionar a categoria e fornecedores.
-
-3. **Validações**:
-   - Implementar validação básica dos campos no frontend.
-
-4. **Exclusão de Produtos**:
-   - Possibilidade de excluir um produto da listagem.
-
----
-
-## Requisitos Não Obrigatórios (Extras)
-
-1. **Documentação**: Documentar a API utilizando Swagger ou similar.
-2. **Testes Automatizados**:
-   - Backend: testes unitários e/ou de integração utilizando xUnit.
-   - Frontend: testes unitários ou de interface com Jest.
-3. **Design**: Melhorar a interface com boas práticas de UX/UI.
-4. **Desempenho**: Implementar cache para melhorar a performance de requisições no backend.
+3. Execute o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
 
 ---
 
-## Requisitos Técnicos
+## **Tecnologias Utilizadas**
 
-### Tecnologias Permitidas
+### **Backend**
+- **Linguagem**: C#
+- **Framework**: ASP.NET Core 8.0
+- **Banco de Dados**: MySQL
+- **ORM**: Entity Framework Core
+- **Cache Distribuído**: Redis (imagem Docker `redis:7.0`)
+- **Bibliotecas**:
+  - AutoMapper
+  - BCrypt.Net-Next
+  - Microsoft.AspNetCore.Authentication.JwtBearer
+  - Pomelo.EntityFrameworkCore.MySql
+  - Swashbuckle (OpenAPI/Swagger)
 
-- **Backend**: C#, .NET Core / .NET 6+
-- **Frontend**: React com TypeScript
-- **Banco de Dados**: Relacional (MySQL, SQL Server, Informix)
-
-### Tecnologias Não Permitidas
-
-- Bancos de dados não relacionais
-- Frameworks de backend que não sejam em C#
-- Bibliotecas que implementem diretamente o CRUD
+### **Frontend**
+- **Linguagem**: JavaScript/TypeScript
+- **Framework**: React 18
+- **Build Tool**: Vite
+- **Bibliotecas**:
+  - Material-UI
+  - Axios
+  - Ag-Grid
+  - TailwindCSS
 
 ---
 
-## Entrega
+## **Decisões de Design**
 
-1. **Fork do Repositório**: Faça um fork deste repositório para sua conta do GitHub.
-2. **Branch**: Crie uma branch com o nome `teste/[SEU NOME]` (por exemplo: `teste/joao-silva`).
-3. **Pull Request**: Ao finalizar, faça um pull request com a sua branch.
-4. **Documentação**: Inclua no `README.md` do repositório:
-   - Como configurar e rodar o projeto
-   - Tecnologias utilizadas
-   - Decisões de design
+### **Backend**
+- **Padrão Repository**:
+  Utilizado para todas as entidades, garantindo modularidade e desacoplamento entre as camadas de acesso a dados e lógica de negócios.
+
+- **Padrão DTO**:
+  Implementado apenas para a entidade Produto, pois foi a única com CRUD completo.
+
+- **Seed Data**:
+  As entidades Fornecedor e Categoria são populadas diretamente no banco de dados via seed, utilizando o comando:
+  ```bash
+  dotnet ef database update
+  ```
+
+- **Injeção de Dependência**:
+  Utilizada para facilitar a modularidade, o desacoplamento e a implementação de testes unitários.
+
+- **Cache Distribuído**:
+  Adicionado para melhorar a performance, com o uso de Redis.
+
+### **Frontend**
+- **Componentização**:
+  Cada parte da interface foi dividida em componentes reutilizáveis para facilitar a manutenção e a escalabilidade do projeto.
 
 ---
 
-## Avaliação
+## **Testes Unitários**
 
-### Critérios
+### **Backend**
+Para executar os testes unitários do backend, navegue até o diretório do backend e execute:
+```bash
+cd diretório_raiz_do_projeto_completo/APICatalogo/APICatalogo
 
-- Qualidade do código e organização do projeto
-- Implementação de boas práticas (design patterns, SOLID, etc.)
-- Alinhamento com os requisitos solicitados
-- Documentação clara
+dotnet test
+```
 
-Boa sorte! Estamos animados para conhecer seu trabalho.
+### **Frontend**
+Para executar os testes unitários do frontend, navegue até o diretório do frontend e execute:
+```bash
+cd diretório_raiz_do_projeto_completo/frontend
+
+npm run test
+```
+
+---
+
+## **Dependências**
+
+### **Backend**
+As dependências do backend estão listadas no arquivo `APICatalogo.csproj`.
+
+### **Frontend**
+As dependências do frontend estão listadas no arquivo `package.json`.
+
+---
+
+Caso tenha dúvidas ou problemas durante a configuração ou execução do projeto, consulte a documentação oficial das tecnologias utilizadas ou entre em contato com Hugo de Souza Caramez.
+
