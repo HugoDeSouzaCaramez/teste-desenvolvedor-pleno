@@ -57,14 +57,17 @@ const ProductList = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id, nome) => {
+    const confirmDelete = window.confirm(`Tem certeza de que deseja excluir o produto "${nome}"?`);
+    if (!confirmDelete) return;
+  
     try {
       await api.delete(`/Produtos/${id}`);
       fetchProducts();
     } catch (error) {
       console.error('Falha ao excluir produto:', error);
     }
-  };
+  }; 
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -146,7 +149,7 @@ const ProductList = () => {
                     Editar
                   </Button>
                   <Button
-                    onClick={() => handleDelete(product.produtoId)}
+                    onClick={() => handleDelete(product.produtoId, product.nome)}
                     variant="contained"
                     color="secondary"
                     size="small"
