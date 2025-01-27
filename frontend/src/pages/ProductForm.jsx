@@ -161,6 +161,7 @@ const ProductForm = () => {
               onChange={handleFormChange}
               error={!!errors.imagemUrl}
               helperText={errors.imagemUrl}
+              required
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -184,6 +185,7 @@ const ProductForm = () => {
               name="categoriaId"
               value={form.categoriaId}
               onChange={handleFormChange}
+              required
             >
               {categorias.map((categoria) => (
                 <MenuItem key={categoria.categoriaId} value={categoria.categoriaId}>
@@ -200,6 +202,7 @@ const ProductForm = () => {
               name="fornecedorId"
               value={form.fornecedorId}
               onChange={handleFormChange}
+              required
             >
               {fornecedores.map((fornecedor) => (
                 <MenuItem key={fornecedor.fornecedorId} value={fornecedor.fornecedorId}>
