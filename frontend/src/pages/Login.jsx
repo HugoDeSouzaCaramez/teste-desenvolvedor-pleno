@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Container, Typography, Grid } from '@mui/material';
-import axios from 'axios';
+import api from '../api';
 
-const API_BASE_URL = 'http://localhost:5082';
 
 const Login = () => {
   const [form, setForm] = useState({ nome: '', senha: '' });
@@ -32,11 +31,12 @@ const Login = () => {
     e.preventDefault();
     if (!validate()) return;
     try {
-      const response = await axios.post(`${API_BASE_URL}/Autenticacoes/login`, form);
+      const response = await api.post('/Autenticacoes/login', form);
       localStorage.setItem('token', response.data.token);
       navigate('/produtos');
     } catch (error) {
       console.error('Falha ao realizar login:', error);
+      alert(error.response.data)
     }
   };
 

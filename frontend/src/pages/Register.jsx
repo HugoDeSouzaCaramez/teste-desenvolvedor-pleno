@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Container, Typography, Grid } from '@mui/material';
-import axios from 'axios';
+import api from '../api';
 
-const API_BASE_URL = 'http://localhost:5082';
 
 const Register = () => {
   const [form, setForm] = useState({ nome: '', senha: '' });
@@ -32,7 +31,7 @@ const Register = () => {
     e.preventDefault();
     if (!validate()) return;
     try {
-      await axios.post(`${API_BASE_URL}/Usuarios`, form);
+      await api.post('/Usuarios', form);
       navigate('/');
     } catch (error) {
       console.error('Falha ao registrar usuário:', error);
