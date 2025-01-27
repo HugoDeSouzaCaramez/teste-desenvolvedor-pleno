@@ -133,8 +133,24 @@ const ProductList = () => {
           <TableBody>
             {displayedProducts.map((product) => (
               <TableRow key={product.produtoId}>
-                <TableCell>{product.nome}</TableCell>
-                <TableCell>{product.descricao}</TableCell>
+                <TableCell
+                  sx={{
+                    whiteSpace: 'normal',
+                    wordWrap: 'break-word',
+                    maxWidth: '10ch',
+                  }}
+                >
+                  {product.nome}
+                </TableCell>
+                <TableCell
+                  sx={{
+                    whiteSpace: 'normal',
+                    wordWrap: 'break-word',
+                    maxWidth: '10ch',
+                  }}
+                >
+                  {product.descricao}
+                </TableCell>
                 <TableCell>{product.preco}</TableCell>
                 <TableCell>{product.categoriaId}</TableCell>
                 <TableCell>{product.fornecedorId}</TableCell>
