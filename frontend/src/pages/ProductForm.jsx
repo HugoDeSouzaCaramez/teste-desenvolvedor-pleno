@@ -15,6 +15,7 @@ const ProductForm = () => {
     categoriaId: 1,
     fornecedorId: 1,
   });
+  const [errors, setErrors] = useState({});
   const [categorias, setCategorias] = useState([]);
   const [fornecedores, setFornecedores] = useState([]);
   const { id } = useParams();
@@ -55,6 +56,27 @@ const ProductForm = () => {
     }
   };
 
+  const validate = () => {
+    const newErrors = {};
+    if (form.nome.length < 3 || form.nome.length > 80) {
+      newErrors.nome = 'O nome deve ter entre 3 e 80 caracteres.';
+    }
+    if (form.descricao.length < 5 || form.descricao.length > 300) {
+      newErrors.descricao = 'A descrição deve ter entre 5 e 300 caracteres.';
+    }
+    if (form.preco < 1 || form.preco > 99999) {
+      newErrors.preco = 'O preço deve ser entre 1 e 99999.';
+    }
+    if (form.imagemUrl.length < 3 || form.imagemUrl.length > 80) {
+      newErrors.imagemUrl = 'A URL da imagem deve ter entre 3 e 80 caracteres.';
+    }
+    if (form.estoque < 0 || form.estoque > 99999) {
+      newErrors.estoque = 'O estoque deve ser entre 0 e 99999.';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setForm({
@@ -65,11 +87,13 @@ const ProductForm = () => {
           ? parseInt(value, 10)
           : value,
     });
+    setErrors({ ...errors, [name]: '' });
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validate()) return;
+
     try {
       const formToSubmit = id ? form : { ...form, produtoId: 0 };
 
@@ -98,6 +122,8 @@ const ProductForm = () => {
               name="nome"
               value={form.nome}
               onChange={handleFormChange}
+              error={!!errors.nome}
+              helperText={errors.nome}
               required
             />
           </Grid>
@@ -108,6 +134,8 @@ const ProductForm = () => {
               name="descricao"
               value={form.descricao}
               onChange={handleFormChange}
+              error={!!errors.descricao}
+              helperText={errors.descricao}
               required
             />
           </Grid>
@@ -119,6 +147,8 @@ const ProductForm = () => {
               name="preco"
               value={form.preco}
               onChange={handleFormChange}
+              error={!!errors.preco}
+              helperText={errors.preco}
               required
             />
           </Grid>
@@ -129,6 +159,8 @@ const ProductForm = () => {
               name="imagemUrl"
               value={form.imagemUrl}
               onChange={handleFormChange}
+              error={!!errors.imagemUrl}
+              helperText={errors.imagemUrl}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -139,6 +171,8 @@ const ProductForm = () => {
               name="estoque"
               value={form.estoque}
               onChange={handleFormChange}
+              error={!!errors.estoque}
+              helperText={errors.estoque}
               required
             />
           </Grid>

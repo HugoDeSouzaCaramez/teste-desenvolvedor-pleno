@@ -20,7 +20,7 @@ public class ProdutoDTO
     public decimal Preco { get; set; }
 
     [Required]
-    [StringLength(300)]
+    [StringLength(80, ErrorMessage = "O nome deve ter entre 3 e 80 caracteres", MinimumLength = 3)]
     public string? ImagemUrl { get; set; }
 
     [Range(0, 99999, ErrorMessage = "O estoque deve estar entre {1} e {2}")]
