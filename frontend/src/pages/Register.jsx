@@ -36,6 +36,7 @@ const Register = () => {
       navigate('/');
     } catch (error) {
       console.error('Falha ao registrar usuário:', error);
+      alert(error.response.data.errors.Nome[0])
     }
   };
 
